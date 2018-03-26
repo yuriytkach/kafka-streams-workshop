@@ -43,3 +43,7 @@ jobs:
 
       - store_test_results:
           path: build/test-results
+
+      - run:
+          name: Upload coverage
+          command: bash <(curl -s https://codecov.io/bash)
