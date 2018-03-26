@@ -1,14 +1,104 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:1.6.1"
+    }
+}
+
 group 'ua.yet'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply plugin: 'com.github.spotbugs'
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 
+jacoco {
+    // if you want to upgrade jacoco version check the latest one here
+    // http://www.jacoco.org/jacoco/
+    // but be very careful as new version might be uncompatible with current properties
+    toolVersion = '0.8.1'
+}
+
+ext {
+    checkstyleVersion = '7.6.1'
+    sevntuChecksVersion = '1.23.1'
+    pmdVersion = '5.5.6'
+    spotbugsVersion = '3.1.1'
+}
+
 repositories {
     mavenCentral()
+    maven {
+        url 'http://sevntu-checkstyle.github.com/sevntu.checkstyle/maven2'
+    }
 }
 
 dependencies {
+    checkstyle group: 'com.github.sevntu.checkstyle', name: 'sevntu-checks', version: sevntuChecksVersion
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+checkstyle {
+    toolVersion = checkstyleVersion
+    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
+}
+
+pmd {
+    toolVersion = pmdVersion
+    ruleSetFiles = files("${projectDir}/config/pmd/pmd-ruleset.xml")
+    consoleOutput = true
+}
+
+spotbugs {
+    toolVersion = spotbugsVersion
+    effort = 'max'
+    reportLevel = 'low'
+}
+
+task checkSpotBugsXmlReport {
+    doLast {
+        def xmlReport = spotbugsMain.reports.xml.destination
+        if (xmlReport.exists()) {
+            def parsedXmlReport = new XmlSlurper().parse(xmlReport)
+            def bugsFound = parsedXmlReport.BugInstance.size()
+            if (bugsFound > 0) {
+                parsedXmlReport.BugInstance.each { bugInstance ->
+                    def sourceLine = bugInstance.Class.SourceLine
+                    println "Bug: ${bugInstance.@type}, class: ${sourceLine.@classname}, lines: ${sourceLine.@start}-${sourceLine.@end}"
+                }
+            }
+        }
+    }
+}
+
+spotbugsMain.finalizedBy checkSpotBugsXmlReport
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+    sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(sourceSets.main.output)
+}
+
+test {
+    jacoco {
+        // If set to true and the execution data file already exists,
+        // coverage data is appended to the existing file.
+        // If set to false, an existing execution data file will be replaced.
+        append = false
+        destinationFile = file("$buildDir/reports/jacoco/test.exec")
+    }
 }
