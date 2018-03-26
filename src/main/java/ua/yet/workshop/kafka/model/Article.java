@@ -1,10 +1,13 @@
 package ua.yet.workshop.kafka.model;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class Article {
 
     private final String title;
@@ -24,25 +27,5 @@ public class Article {
         this.site = site;
         this.publishDate = publishDate;
         this.authors = Collections.unmodifiableList(Arrays.asList(authors));
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getSite() {
-        return site;
-    }
-
-    public LocalDateTime getPublishDate() {
-        return publishDate;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
     }
 }

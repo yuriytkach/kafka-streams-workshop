@@ -7,19 +7,19 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
     }
-    dependencies {
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:1.6.1"
-    }
+}
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.11'
+    id 'java'
+    id 'checkstyle'
+    id 'pmd'
+    id 'com.github.spotbugs' version '1.6.1'
+    id 'jacoco'
 }
 
 group 'ua.yet'
 version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
-apply plugin: 'com.github.spotbugs'
-apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 
