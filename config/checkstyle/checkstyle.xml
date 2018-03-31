@@ -5,7 +5,7 @@
 
 <module name="Checker">
 
-    <module name="JavadocPackage"/>
+    <!--<module name="JavadocPackage"/>-->
 
     <!-- Checks for Size Violations -->
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
@@ -282,11 +282,6 @@
     <module name="RegexpSingleline">
         <property name="format" value="org\.apache\.commons\.lang\."/>
         <property name="message" value="Use guava or org.apache.commons.lang3 instead of old org.apache.commons.lang."/>
-    </module>
-
-    <module name="RegexpSingleline">
-        <property name="format" value="edu.umd.cs.findbugs.annotations.SuppressWarnings"/>
-        <property name="message" value="Suppress findbugs violations via findbugs-exclude.xml instead of annotations"/>
     </module>
 
     <module name="RegexpMultiline">
