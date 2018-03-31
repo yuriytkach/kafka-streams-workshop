@@ -34,7 +34,14 @@ ext {
     checkstyleVersion = '7.6.1'
     sevntuChecksVersion = '1.23.1'
     pmdVersion = '5.5.6'
-    spotbugsVersion = '3.1.1'
+    spotbugsVersion = '3.1.2'
+
+    kafkaStreamsVersion = '1.0.1'
+    gsonVersion = '2.8.2'
+
+    junitVersion = '4.12'
+    assertJVersion = '3.9.1'
+    jsonAssertVersion = '1.5.0'
 }
 
 repositories {
@@ -45,8 +52,17 @@ repositories {
 }
 
 dependencies {
+    compile(
+            [group: 'org.apache.kafka', name: 'kafka-streams', version: kafkaStreamsVersion],
+            [group: 'com.google.code.gson', name: 'gson', version: gsonVersion]
+    )
     checkstyle group: 'com.github.sevntu.checkstyle', name: 'sevntu-checks', version: sevntuChecksVersion
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile(
+            [group: 'junit', name: 'junit', version: junitVersion],
+            [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
+            [group: 'org.skyscreamer', name: 'jsonassert', version: jsonAssertVersion],
+            [group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: spotbugsVersion]
+    )
 }
 
 checkstyle {
@@ -68,14 +84,17 @@ spotbugs {
 
 task checkSpotBugsXmlReport {
     doLast {
-        def xmlReport = spotbugsMain.reports.xml.destination
-        if (xmlReport.exists()) {
-            def parsedXmlReport = new XmlSlurper().parse(xmlReport)
-            def bugsFound = parsedXmlReport.BugInstance.size()
-            if (bugsFound > 0) {
-                parsedXmlReport.BugInstance.each { bugInstance ->
-                    def sourceLine = bugInstance.Class.SourceLine
-                    println "Bug: ${bugInstance.@type}, class: ${sourceLine.@classname}, lines: ${sourceLine.@start}-${sourceLine.@end}"
+        [spotbugsMain, spotbugsTest].each {
+            def xmlReport = it.reports.xml.destination
+            println(xmlReport)
+            if (xmlReport.exists()) {
+                def parsedXmlReport = new XmlSlurper().parse(xmlReport)
+                def bugsFound = parsedXmlReport.BugInstance.size()
+                if (bugsFound > 0) {
+                    parsedXmlReport.BugInstance.each { bugInstance ->
+                        def sourceLine = bugInstance.Class.SourceLine
+                        println "Bug: ${bugInstance.@type}, class: ${sourceLine.@classname}, lines: ${sourceLine.@start}-${sourceLine.@end}"
+                    }
                 }
             }
         }
