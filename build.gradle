@@ -42,6 +42,7 @@ ext {
     junitVersion = '4.12'
     assertJVersion = '3.9.1'
     jsonAssertVersion = '1.5.0'
+    kafkaJunitVersion = '4.1.1'
 }
 
 repositories {
@@ -61,7 +62,8 @@ dependencies {
             [group: 'junit', name: 'junit', version: junitVersion],
             [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
             [group: 'org.skyscreamer', name: 'jsonassert', version: jsonAssertVersion],
-            [group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: spotbugsVersion]
+            [group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: spotbugsVersion],
+            [group: 'com.github.charithe', name: 'kafka-junit', version: kafkaJunitVersion]
     )
 }
 
